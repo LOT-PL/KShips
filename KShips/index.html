@@ -1,0 +1,140 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KShips</title>
+    <link rel="stylesheet" type="text/css" href="main.css">
+     <script>
+       function update() {
+         var chromebar = {
+           "appId": "xyz.lotpl.kships",
+           "topNavBar": {
+             "template": "title",
+             "title": "KShips",
+             "buttons": [
+               {
+                 "id": "KPP_MORE",
+                 "state": "enabled",
+                 "handling": "system"
+               },
+               {
+                 "id": "KPP_CLOSE",
+                 "state": "enabled",
+                 "handling": "system"
+               }
+             ],
+           },
+           "systemMenu": {
+             "clientParams": {
+               "profile": {
+                 "name": "default",
+                 "items": [
+                   {
+                     "id": "KSHIPS_RELOAD",
+                     "state": "enabled",
+                     "handling": "notifyApp",
+                     "label": "Reload",
+                     "position": 0
+                   }
+                 ],
+                 "selectionMode": "none",
+                 "closeOnUse": true
+               }
+             }
+           }
+         };
+         window.kindle.messaging.sendMessage("com.lab126.chromebar", "configureChrome", chromebar);
+       };
+
+       window.kindle.appmgr.ongo = function (ctx) {
+         update();
+         window.kindle.messaging.receiveMessage("systemMenuItemSelected", function (type, id) {
+           switch (id) {
+             case "KSHIPS_RELOAD":
+               window.location.reload();
+           };
+         });
+       };
+  </script>
+</head>
+<body>
+    <div id="game-container">
+        <div id="header">
+            <h1>KShips</h1>
+            <div id="status">Select Difficulty to Start</div>
+        </div>
+
+        <div id="menu-screen" class="screen">
+            <div class="menu-content">
+                <h2>Select Difficulty</h2>
+                <button type="button" class="menu-btn" id="easy-btn">Easy</button>
+                <button type="button" class="menu-btn" id="medium-btn">Medium</button>
+                <button type="button" class="menu-btn" id="hard-btn">Hard</button>
+            </div>
+        </div>
+
+        <div id="setup-screen" class="screen hidden">
+            <div class="setup-content">
+                <h2>Place Your Ships</h2>
+                <div id="ship-info">
+                    <p id="current-ship">Carrier (5 cells)</p>
+                    <p class="instruction">Click grid to place. Click again to rotate.</p>
+                </div>
+                <div id="player-grid-container" class="grid-container">
+                    <h3>Your Fleet</h3>
+                    <div id="player-setup-grid" class="grid"></div>
+                </div>
+                <div class="setup-controls">
+                    <button type="button" id="rotate-btn" class="control-btn">Rotate Ship</button>
+                    <button type="button" id="random-btn" class="control-btn">Random Placement</button>
+                    <button type="button" id="start-game-btn" class="control-btn" disabled="disabled">Start Battle</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+            <div class="game-content">
+                <div class="stats">
+                    <div class="stat-box">
+                        <strong>Ships Remaining:</strong>
+                        <div>You: <span id="player-ships">5</span></div>
+                        <div>Enemy: <span id="enemy-ships">5</span></div>
+                    </div>
+                    <div class="stat-box">
+                        <strong>Shots Fired:</strong> <span id="shot-count">0</span>
+                    </div>
+                    <div class="stat-box">
+                        <strong>Hit Rate:</strong> <span id="hit-rate">0%</span>
+                    </div>
+                </div>
+
+                <div class="grids">
+                    <div class="grid-container">
+                        <h3>Your Fleet</h3>
+                        <div id="player-game-grid" class="grid"></div>
+                    </div>
+                    <div class="grid-container">
+                        <h3>Enemy Waters</h3>
+                        <div id="enemy-grid" class="grid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="game-over-screen" class="screen hidden">
+            <div class="menu-content">
+                <h2 id="result-title">Game Over</h2>
+                <div id="final-stats">
+                    <p>Shots Fired: <span id="final-shots">0</span></p>
+                    <p>Hit Rate: <span id="final-rate">0%</span></p>
+                    <p>Ships Sunk: <span id="final-sunk">0</span></p>
+                </div>
+                <button type="button" class="menu-btn" id="play-again-btn">Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="main.js"></script>
+</body>
+</html>

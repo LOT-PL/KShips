@@ -1,0 +1,345 @@
+@font-face {
+    font-family: "Libre Baskerville";
+    src: url("assets/libre-baskerville.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Inter";
+    src: url("assets/inter.ttf") format("truetype");
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Libre Baskerville", "Inter", Georgia, serif;
+    background-color: #ffffff;
+    color: #000000;
+    line-height: 1.5;
+    padding: 10px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+#game-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #ffffff;
+}
+
+#header {
+    text-align: center;
+    padding: 15px 0;
+    border-bottom: 3px solid #000000;
+    margin-bottom: 15px;
+}
+
+h1 {
+    font-size: 2em;
+    font-weight: bold;
+    margin-bottom: 8px;
+    letter-spacing: 2px;
+}
+
+h2 {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+h3 {
+    font-size: 1.1em;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 2px solid #000000;
+    background-color: #f0f0f0;
+}
+
+#status {
+    font-size: 1.1em;
+    padding: 8px;
+    border: 2px solid #000000;
+    background-color: #f5f5f5;
+    margin: 10px 20px;
+}
+
+.screen {
+    display: block;
+}
+
+.screen.hidden {
+    display: none;
+}
+
+.menu-content {
+    text-align: center;
+    padding: 30px 20px;
+}
+
+.menu-btn {
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    margin: 15px auto;
+    padding: 15px 25px;
+    font-size: 1.2em;
+    font-weight: bold;
+    font-family: "Inter", "Libre Baskerville", Georgia, serif;
+    background-color: #ffffff;
+    color: #000000;
+    border: 3px solid #000000;
+    cursor: pointer;
+}
+
+.menu-btn:hover {
+    background-color: #000000;
+    color: #ffffff;
+}
+
+.menu-btn:active {
+    background-color: #333333;
+}
+
+.setup-content {
+    padding: 10px;
+}
+
+#ship-info {
+    text-align: center;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 2px solid #000000;
+    background-color: #f5f5f5;
+}
+
+#ship-info p {
+    margin: 5px 0;
+}
+
+#current-ship {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.instruction {
+    font-size: 0.9em;
+    font-style: italic;
+}
+
+.grid-container {
+    margin: 20px auto;
+    max-width: 500px;
+}
+
+.grid {
+    display: block;
+    border: 3px solid #000000;
+    background-color: #ffffff;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.grid-row {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    line-height: 0;
+    height: auto;
+}
+
+.grid-cell {
+    position: relative;
+    width: 10%;
+    padding-bottom: 10%;
+    border: 1px solid #666666;
+    background-color: #ffffff;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.grid-cell:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+}
+
+.grid-cell.ship {
+    background-color: #a3a3a3;
+}
+
+.grid-cell.hit {
+    background-color: #000000;
+    border-color: #000000;
+}
+
+.grid-cell.hit:after {
+    top: 20%;
+    left: 20%;
+    width: 60%;
+    height: 60%;
+    background-color: #ffffff;
+}
+
+.grid-cell.miss {
+    background-color: #ffffff;
+}
+
+.grid-cell.miss:after {
+    top: 25%;
+    left: 25%;
+    width: 50%;
+    height: 50%;
+    border: 2px solid #000000;
+    background: transparent;
+}
+
+.grid-cell.sunk {
+    background-color: #000000;
+    border-color: #000000;
+}
+
+.grid-cell.sunk:after {
+    width: 0;
+    height: 0;
+}
+
+.grid-cell.preview {
+    background-color: #d0d0d0;
+    border: 2px dashed #000000;
+}
+
+.grid-cell.invalid {
+    background-color: #888888;
+}
+
+.setup-controls {
+    text-align: center;
+    padding: 20px;
+}
+
+.control-btn {
+    display: inline-block;
+    margin: 8px;
+    padding: 12px 20px;
+    font-size: 1em;
+    font-weight: bold;
+    font-family: "Inter", "Libre Baskerville", Georgia, serif;
+    background-color: #ffffff;
+    color: #000000;
+    border: 2px solid #000000;
+    cursor: pointer;
+}
+
+.control-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.control-btn:active {
+    background-color: #cccccc;
+}
+
+.control-btn:disabled {
+    background-color: #f5f5f5;
+    color: #999999;
+    border-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.game-content {
+    padding: 10px;
+}
+
+.stats {
+    display: block;
+    margin: 15px 0;
+    padding: 15px;
+    border: 2px solid #000000;
+    background-color: #f5f5f5;
+    text-align: center;
+}
+
+.stat-box {
+    display: inline-block;
+    margin: 0 15px;
+    padding: 10px;
+    vertical-align: top;
+}
+
+.stat-box strong {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 1.1em;
+}
+
+.grids {
+    display: block;
+    text-align: center;
+}
+
+.grids .grid-container {
+    display: inline-block;
+    margin: 10px 15px;
+    vertical-align: top;
+}
+
+#player-grid-container {
+    text-align: center;
+}
+
+#final-stats {
+    padding: 20px;
+    margin: 20px 0;
+    border: 2px solid #000000;
+    background-color: #f5f5f5;
+}
+
+#final-stats p {
+    font-size: 1.1em;
+    margin: 10px 0;
+}
+
+#result-title {
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+@media screen and (max-width: 600px) {
+    body {
+        padding: 5px;
+    }
+
+    h1 {
+        font-size: 1.5em;
+    }
+
+    .grids .grid-container {
+        display: block;
+        margin: 15px auto;
+    }
+
+    .stat-box {
+        display: block;
+        margin: 10px 0;
+    }
+
+    .menu-btn {
+        padding: 12px 20px;
+        font-size: 1em;
+    }
+}
+
+@media print {
+    body {
+        background-color: #ffffff;
+    }
+}
