@@ -11,7 +11,7 @@ There is 3 styles of difficulty Easy, Medium and Hard
 
 ## Installation
 > [!NOTE]
-> This is my first Kindle Game/App so it is kinda bad and it doesn't have a cover yet but ill add one soon !
+> This is my first Kindle Game/App so it is kinda bad!
 
 1. Grab the latest file from releases
 2. Unzip it, paste both `KShips/` and `KShips.sh` into the `documents/` folder on your Kindle.
