@@ -8,6 +8,11 @@ There is 3 styles of difficulty Easy, Medium and Hard
 - Medium: 70% chance to target adjacent cells after a hit
 - Hard: Always targets adjacent cells intelligently after scoring a hit
 
+## Minimum Requirements 
+
+ - AdBreak, WinterBreak, or LanguageBreak
+ - Latest Universal Hotfix
+ - Both hard-float and soft-float kindles should work, but not all packages may support both architectures.
 
 ## Installation
 > [!NOTE]
