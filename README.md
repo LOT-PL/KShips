@@ -12,7 +12,7 @@ There is 3 styles of difficulty Easy, Medium and Hard
 
  - AdBreak, WinterBreak, or LanguageBreak
  - Latest Universal Hotfix
- - Both hard-float and soft-float kindles should work, but not all packages may support both architectures.
+ - Both hard-float and soft-float kindles should work
 
 ## Installation
 > [!NOTE]
