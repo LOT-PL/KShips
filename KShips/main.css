@@ -1,85 +1,196 @@
-body {
-    font-family: Arial, sans-serif;
-    background: #eee;
+@font-face {
+    font-family: "Libre Baskerville";
+    src: url("assets/libre-baskerville.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Inter";
+    src: url("assets/inter.ttf") format("truetype");
+}
+
+* {
     margin: 0;
     padding: 0;
-    text-align: center;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    font-family: 'Inter', 'Libre Baskerville', Arial, sans-serif;
+    background-color: #fff;
+    color: #000;
+    padding: 10px;
+    -webkit-user-select: none;
+    user-select: none;
+    line-height: 1.35;
+}
+
+#game-container {
+    max-width: 760px;
+    margin: 0 auto;
 }
 
 #header {
-    background: #000;
-    color: #fff;
-    padding: 10px 0;
-    border-bottom: 4px solid #444;
+    text-align: center;
+    padding: 12px 0;
+    border-bottom: 2px solid #000;
+    margin-bottom: 12px;
 }
 
-#header h1 { margin: 0; font-size: 26px; }
-#header p { margin: 3px 0 0 0; font-size: 14px; font-weight: bold; }
+h1 {
+    font-size: 1.6em;
+    margin-bottom: 6px;
+}
 
 .subtitle {
     font-weight: bold;
-    margin: 8px 0;
-    font-size: 14px;
+    margin-top: 6px;
+    margin-bottom: 8px;
+    font-size: 1em;
+}
+
+.version {
+    font-size: 0.9em;
+    margin-top: 6px;
+    color: #222;
 }
 
 .screen {
     display: block;
-    padding: 10px;
 }
 
-.hidden {
+.screen.hidden {
     display: none;
 }
 
-.menu-btn {
+.menu-content,
+.setup-content,
+.game-content {
+    text-align: center;
+    padding: 12px;
+    max-width: 760px;
+    margin: 0 auto;
+}
+
+h2 {
+    font-size: 1.2em;
+    margin-bottom: 8px;
+}
+
+h3 {
+    font-size: 1em;
+    margin: 8px 0;
+}
+
+button,
+.control-btn,
+.menu-btn,
+.setting-btn {
     display: block;
     width: 90%;
-    max-width: 300px;
-    margin: 10px auto;
-    padding: 15px;
+    max-width: 380px;
+    margin: 12px auto;
+    padding: 16px 0;
     background: #000;
     color: #fff;
-    border: 2px solid #333;
+    border: 3px solid #333;
     font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+}
+
+button:active,
+.control-btn:active {
+    background: #222;
+    color: #fff;
+}
+
+#multiplayer-input-container {
+    width: 100%;
+    max-width: 360px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+#multiplayer-input-container label {
+    font-weight: bold;
+    display: block;
+    margin: 6px 0 3px 0;
+    font-size: 18px;
 }
 
 input[type="text"] {
-    width: 90%;
-    max-width: 300px;
-    padding: 6px;
-    margin: 6px auto;
-    display: block;
+    width: 100%;
+    padding: 8px;
     border: 2px solid #000;
-    font-size: 16px;
+    margin-bottom: 10px;
+    font-size: 18px;
+    box-sizing: border-box;
 }
 
-.grid {
+.setup-controls {
+    margin-top: 12px;
+}
+
+.achievements-list {
+    text-align: left;
+    width: 90%;
+    max-width: 520px;
+    margin: 6px auto;
+    padding: 6px;
     border: 2px solid #000;
-    padding: 0;
-    margin: 0;
     background: #fff;
 }
 
-.grid-row {
-    margin: 0;
-    padding: 0;
+.achievement-item {
+    padding: 8px;
+    border-bottom: 1px solid #ccc;
+    font-size: 16px;
 }
 
-.grid-cell {
-    width: 28px;
-    height: 28px;
-    margin: 0;
-    padding: 0;
-    float: left;
-    border: 1px solid #000;
+.achievement-item.locked {
+    opacity: 0.85;
+    color: #444;
 }
 
-.grid-cell.ship { background: #bbb; }
-.grid-cell.hit { background: #fff; border: 2px solid #000; }
-.grid-cell.sunk { background: #000; color: #fff; }
-.grid-cell.miss { background: #ccc; }
+.achievement-name {
+    font-weight: bold;
+    margin-bottom: 4px;
+}
 
-.grid-cell.animating { background: #fff; }
+.achievement-desc {
+    font-size: 0.9em;
+    color: #333;
+}
+
+.achievement-unlocked-label {
+    font-size: 0.85em;
+    color: #000;
+    font-weight: bold;
+}
+
+.achievement-locked-label {
+    font-size: 0.85em;
+    color: #666;
+}
+
+#status {
+    margin: 8px auto 12px;
+    padding: 8px;
+    border: 2px solid #000;
+    background: #f6f6f6;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+#current-ship {
+    font-size: 16px;
+    margin: 6px 0;
+}
 
 .grids {
     width: 100%;
@@ -95,38 +206,111 @@ input[type="text"] {
     padding: 0;
 }
 
-#player-game-grid .grid-row:after,
-#enemy-grid .grid-row:after,
-.grid:after {
-    content: "";
+.grid {
+    border: 2px solid #000;
+    background: #fff;
+    padding: 0;
+    margin: 0;
+    display: block;
+}
+
+.grid-row {
+    white-space: nowrap;
     display: block;
     clear: both;
 }
 
-#achievements-list {
-    margin: 10px auto;
-    width: 90%;
-    max-width: 340px;
-    text-align: left;
-}
-
-.achievement-item {
-    border: 2px solid #000;
-    padding: 6px;
-    margin: 6px 0;
+.grid-cell {
+    width: 30px;
+    height: 30px;
+    margin: 0;
+    padding: 0;
+    float: left;
+    border: 1px solid #666;
     background: #fff;
+    position: relative;
+    box-sizing: border-box;
 }
 
-.achievement-item.locked { background: #ddd; }
+.grid-cell.ship {
+    background: #d9d9d9;
+}
 
-.achievement-name { font-weight: bold; font-size: 16px; }
-.achievement-desc { font-size: 14px; margin-top: 2px; }
-.achievement-unlocked-label { color: green; font-weight: bold; }
-.achievement-locked-label { color: red; font-weight: bold; }
+.grid-cell.hit {
+    background: #000 !important;
+}
 
-#status { font-size: 16px; font-weight: bold; margin: 6px 0; }
+.grid-cell.sunk {
+    background: #000 !important;
+}
 
-#current-ship { font-size: 16px; margin: 6px 0; }
+.grid-cell .mark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    margin-left: -5px;
+    margin-top: -5px;
+    background: #fff;
+    pointer-events: none;
+}
+
+.grid-cell .dot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    margin-left: -3px;
+    margin-top: -3px;
+    background: #000;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.stat-box {
+    display: inline-block;
+    margin: 6px 10px;
+    vertical-align: top;
+    font-size: 16px;
+}
+
+.stats {
+    margin: 8px auto;
+    padding: 10px;
+    border: 2px solid #000;
+    background: #fafafa;
+    text-align: center;
+    max-width: 720px;
+}
+
+.setting-row {
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
+    overflow: hidden;
+    padding: 0 6px;
+    box-sizing: border-box;
+}
+
+.setting-label {
+    float: left;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.setting-check {
+    float: right;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.setting-row:after {
+    content: "";
+    display: block;
+    clear: both;
+}
 
 #achievements-unlocked-display {
     font-size: 14px;
@@ -135,25 +319,16 @@ input[type="text"] {
     border-top: 2px solid #000;
 }
 
-#final-shots, #final-rate, #final-sunk {
-    font-weight: bold;
-}
+@media screen and (max-width: 600px) {
+    .grid-cell {
+        width: 26px;
+        height: 26px;
+    }
 
-#new-achievement {
-    font-size: 16px;
-    font-weight: bold;
-    color: green;
-    margin: 10px 0;
-}
-button {
-    display: block;
-    width: 100%;
-    max-width: 360px;
-    margin: 12px auto;
-    padding: 14px 0;
-    background: #000;
-    color: #fff;
-    border: 5px solid #333;
-    font-size: 25px;
-    font-weight: bold;
+    button,
+    .control-btn,
+    .menu-btn {
+        font-size: 20px;
+        padding: 14px 0;
+    }
 }
