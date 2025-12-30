@@ -1,6 +1,6 @@
-# KShips 🚢
+<img width="1006" height="325" alt="ascii-art-text-transparent" src="https://github.com/user-attachments/assets/ad584306-f8a8-4d29-97b7-add7ac14553e" />
 
-**KShips is a battleship port to the Kindle!**
+# KShips is a battleship port to the Kindle!
 
 There is 3 styles of difficulty Easy, Medium and Hard
  
@@ -12,8 +12,6 @@ There is 3 styles of difficulty Easy, Medium and Hard
 
  - AdBreak, WinterBreak, or LanguageBreak
  - Latest Universal Hotfix
- - Both hard-float and soft-float kindles should work
-
 ## Installation
 > [!NOTE]
 > This is my first Kindle Game/App so it is kinda bad!
