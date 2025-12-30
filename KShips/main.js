@@ -42,7 +42,8 @@
         gameOver: false,
         aiLastHit: null,
         aiTargets: [],
-        aiHitDirection: null
+        aiHitDirection: null,
+        aiMode: 'search'
     };
     function init() {
         bindSettingsButtons();
@@ -51,6 +52,13 @@
         initializeBoards();
         attachMenuListeners();
         attachNewListeners();
+    }
+    function computeCellSize() {
+        var maxGridWidth = 720;
+        var size = Math.floor(maxGridWidth / GRID_SIZE);
+        if (size > 40) size = 40;
+        if (size < 14) size = 14;
+        return size;
     }
     function applyGridSizeFromSettings() {
         GRID_SIZE = parseInt(appSettings.gridSize, 10) || 10;
@@ -191,6 +199,8 @@
                 appSettings.gridSize = size;
                 saveSettings();
                 applyGridSizeFromSettings();
+                initializeBoards();
+                renderSetupGrid();
             };
         }
     }
@@ -225,11 +235,14 @@
     function updateStatus(msg) { var s = document.getElementById('status'); if (s) s.textContent = msg; }
     function renderSetupGrid() {
         var container = document.getElementById('player-setup-grid'); if (!container) return; container.innerHTML = '';
+        var cellSize = computeCellSize();
+        container.style.width = (cellSize * GRID_SIZE) + 'px';
         for (var row = 0; row < GRID_SIZE; row++) {
             var rowDiv = document.createElement('div'); rowDiv.className = 'grid-row';
             for (var col = 0; col < GRID_SIZE; col++) {
                 var cell = document.createElement('div'); cell.className = 'grid-cell';
                 cell.setAttribute('data-row', row); cell.setAttribute('data-col', col);
+                cell.style.width = cellSize + 'px'; cell.style.height = cellSize + 'px';
                 if (gameState.playerBoard[row][col].ship !== null) cell.className += ' ship';
                 cell.innerHTML = '';
                 cell.onmouseover = setupCellHover; cell.onmouseout = setupCellOut; cell.onclick = setupCellClick;
@@ -364,17 +377,20 @@
             placeEnemyShips();
         }
         gameState.shotsFired = 0; gameState.hits = 0; gameState.playerHits = 0; gameState.enemyHits = 0; gameState.isPlayerTurn = true; gameState.gameOver = false;
-        gameState.aiLastHit = null; gameState.aiTargets = []; gameState.aiHitDirection = null; appSettings.consecutiveSinks = 0;
+        gameState.aiLastHit = null; gameState.aiTargets = []; gameState.aiHitDirection = null; gameState.aiMode = 'search'; appSettings.consecutiveSinks = 0;
         showScreenNew('game-screen'); updateStatus('Your turn - Select enemy waters to fire!'); renderGameGrids(); updateStats();
     }
     function renderGameGrids() { renderPlayerGameGrid(); renderEnemyGrid(); }
     function renderPlayerGameGrid() {
         var container = document.getElementById('player-game-grid'); if (!container) return; container.innerHTML = '';
+        var cellSize = computeCellSize();
+        container.style.width = (cellSize * GRID_SIZE) + 'px';
         for (var row = 0; row < GRID_SIZE; row++) {
             var rowDiv = document.createElement('div'); rowDiv.className = 'grid-row';
             for (var col = 0; col < GRID_SIZE; col++) {
                 var cell = document.createElement('div'); cell.className = 'grid-cell';
                 var cellData = gameState.playerBoard[row][col];
+                cell.style.width = cellSize + 'px'; cell.style.height = cellSize + 'px';
                 if (cellData.ship !== null) cell.className += ' ship';
                 cell.innerHTML = '';
                 if (cellData.hit) {
@@ -391,12 +407,15 @@
     }
     function renderEnemyGrid() {
         var container = document.getElementById('enemy-grid'); if (!container) return; container.innerHTML = '';
+        var cellSize = computeCellSize();
+        container.style.width = (cellSize * GRID_SIZE) + 'px';
         for (var row = 0; row < GRID_SIZE; row++) {
             var rowDiv = document.createElement('div'); rowDiv.className = 'grid-row';
             for (var col = 0; col < GRID_SIZE; col++) {
                 var cell = document.createElement('div'); cell.className = 'grid-cell';
                 cell.setAttribute('data-row', row); cell.setAttribute('data-col', col);
                 var cellData = gameState.enemyBoard[row][col]; cell.innerHTML = '';
+                cell.style.width = cellSize + 'px'; cell.style.height = cellSize + 'px';
                 if (cellData.hit) {
                     if (cellData.ship !== null) {
                         var ship = findShip(gameState.enemyShips,row,col);
@@ -426,7 +445,12 @@
                     else { updateStatus('Hit!'); }
                 }
             } else { updateStatus('Miss!'); appSettings.consecutiveSinks = 0; }
-            renderGameGrids(); updateStats(); if (checkGameOver()) return;
+            renderGameGrids(); updateStats();
+            if (gameState.enemyBoard[row][col].ship !== null) {
+                var statsNow = { victory:false, shotsFired: gameState.shotsFired, hitRate: Math.round((gameState.hits / gameState.shotsFired) * 100), shipsDestroyed: gameState.playerHits, consecutiveSinks: appSettings.consecutiveSinks, difficulty: gameState.difficulty };
+                checkAchievements(statsNow); displayAchievements();
+            }
+            if (checkGameOver()) return;
             if (appSettings.gameMode === 'multiplayer') {
                 appSettings.currentPlayer = appSettings.currentPlayer === 0 ? 1 : 0;
                 var tmpB = gameState.playerBoard, tmpS = gameState.playerShips;
@@ -441,28 +465,65 @@
     function enemyTurn() {
         if (gameState.gameOver) return; updateStatus('Enemy is attacking...');
         setTimeout(function() {
-            var target = getAITarget(); var row = target.row, col = target.col;
+            var target = getAITarget();
+            var row = target.row, col = target.col;
             gameState.playerBoard[row][col].hit = true;
             if (gameState.playerBoard[row][col].ship !== null) {
                 var ship = findShip(gameState.playerShips,row,col);
                 if (ship) {
-                    ship.hits++; gameState.aiLastHit = { row: row, col: col }; addAdjacentTargets(row,col);
-                    if (isShipSunk(ship)) { updateStatus('Enemy sunk your ' + ship.name + '!'); gameState.enemyHits++; gameState.aiLastHit = null; gameState.aiTargets = []; gameState.aiHitDirection = null; }
-                    else { updateStatus('Enemy hit your ship!'); }
+                    ship.hits++; gameState.aiLastHit = { row: row, col: col };
+                    addAdjacentTargets(row,col);
+                    if (isShipSunk(ship)) { updateStatus('Enemy sunk your ' + ship.name + '!'); gameState.enemyHits++; gameState.aiLastHit = null; gameState.aiTargets = []; gameState.aiHitDirection = null; gameState.aiMode = 'search'; }
+                    else {
+                        updateStatus('Enemy hit your ship!');
+                        if (gameState.aiLastHit && gameState.aiTargets.length > 0) {
+                            var next = gameState.aiTargets[0];
+                            if (next && next.row === gameState.aiLastHit.row) gameState.aiHitDirection = 'horizontal';
+                            else if (next && next.col === gameState.aiLastHit.col) gameState.aiHitDirection = 'vertical';
+                            gameState.aiMode = 'target';
+                        }
+                    }
                 }
             } else { updateStatus('Enemy missed!'); }
-            renderGameGrids(); updateStats(); if (checkGameOver()) return;
+            renderGameGrids(); updateStats();
+            if (gameState.playerBoard[row][col].ship !== null) {
+                var statsNow = { victory:false, shotsFired: gameState.shotsFired, hitRate: Math.round((gameState.hits / Math.max(1, gameState.shotsFired)) * 100), shipsDestroyed: gameState.playerHits, consecutiveSinks: appSettings.consecutiveSinks, difficulty: gameState.difficulty };
+                checkAchievements(statsNow); displayAchievements();
+            }
+            if (checkGameOver()) return;
             gameState.isPlayerTurn = true; setTimeout(function() { updateStatus('Your turn - Select enemy waters to fire!'); }, 600);
         }, 500);
     }
     function getAITarget() {
-        if (gameState.aiTargets.length > 0) return gameState.aiTargets.shift();
-        return getRandomTarget();
+        var difficulty = gameState.difficulty;
+        if (difficulty === 'easy') {
+            return getRandomTarget();
+        } else if (difficulty === 'medium') {
+            if (gameState.aiTargets.length > 0 && Math.random() < 0.7) {
+                return gameState.aiTargets.shift();
+            }
+            return getRandomTarget();
+        } else {
+            if (gameState.aiTargets.length > 0) {
+                if (gameState.aiHitDirection) {
+                    for (var i = 0; i < gameState.aiTargets.length; i++) {
+                        var t = gameState.aiTargets[i];
+                        if (gameState.aiHitDirection === 'horizontal' && t.row === gameState.aiLastHit.row) { gameState.aiTargets.splice(i,1); return t; }
+                        if (gameState.aiHitDirection === 'vertical' && t.col === gameState.aiLastHit.col) { gameState.aiTargets.splice(i,1); return t; }
+                    }
+                }
+                return gameState.aiTargets.shift();
+            }
+            return getRandomTarget();
+        }
     }
     function getRandomTarget() {
-        for (var attempts = 0; attempts < 200; attempts++) {
-            var r = Math.floor(Math.random() * GRID_SIZE); var c = Math.floor(Math.random() * GRID_SIZE);
+        var attempts = 0;
+        while (attempts < 500) {
+            var r = Math.floor(Math.random() * GRID_SIZE);
+            var c = Math.floor(Math.random() * GRID_SIZE);
             if (!gameState.playerBoard[r][c].hit) return { row: r, col: c };
+            attempts++;
         }
         for (var rr = 0; rr < GRID_SIZE; rr++) {
             for (var cc = 0; cc < GRID_SIZE; cc++) {
@@ -524,7 +585,7 @@
     }
     function resetGame() {
         GRID_SIZE = parseInt(appSettings.gridSize,10) || 10;
-        gameState = { difficulty:null, currentShipIndex:0, isHorizontal:true, playerBoard:null, enemyBoard:null, playerShips:[], enemyShips:[], playerHits:0, enemyHits:0, shotsFired:0, hits:0, isPlayerTurn:true, gameOver:false, aiLastHit:null, aiTargets:[], aiHitDirection:null };
+        gameState = { difficulty:null, currentShipIndex:0, isHorizontal:true, playerBoard:null, enemyBoard:null, playerShips:[], enemyShips:[], playerHits:0, enemyHits:0, shotsFired:0, hits:0, isPlayerTurn:true, gameOver:false, aiLastHit:null, aiTargets:[], aiHitDirection:null, aiMode:'search' };
         appSettings.consecutiveSinks = 0; appSettings.playerFleets = [null,null];
         initializeBoards(); showScreenNew('menu-screen'); updateStatus('Battleship');
         var sb = document.getElementById('start-game-btn'); if (sb) sb.disabled = true;
@@ -538,6 +599,26 @@
         var out = [];
         for (var i = 0; i < ships.length; i++) out.push({ name: ships[i].name, size: ships[i].size, positions: JSON.parse(JSON.stringify(ships[i].positions)), hits: ships[i].hits || 0 });
         return out;
+    }
+    function checkAchievements(stats) {
+        for (var i = 0; i < ACHIEVEMENTS.length; i++) {
+            var ach = ACHIEVEMENTS[i];
+            if (appSettings.unlockedAchievements.indexOf(ach.id) === -1 && ach.check(stats)) {
+                appSettings.unlockedAchievements.push(ach.id);
+            }
+        }
+        saveSettings();
+    }
+    function displayAchievements() {
+        var div = document.getElementById('achievements-unlocked-display');
+        if (!div) return;
+        var newUnlocked = [];
+        for (var i = 0; i < ACHIEVEMENTS.length; i++) {
+            if (appSettings.unlockedAchievements.indexOf(ACHIEVEMENTS[i].id) !== -1) {
+                newUnlocked.push(ACHIEVEMENTS[i].name);
+            }
+        }
+        div.textContent = newUnlocked.length ? 'Achievements: ' + newUnlocked.join(', ') : 'No achievements yet';
     }
     if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); }
 })();

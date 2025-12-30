@@ -2,7 +2,6 @@
     font-family: "Libre Baskerville";
     src: url("assets/libre-baskerville.ttf") format("truetype");
 }
-
 @font-face {
     font-family: "Inter";
     src: url("assets/inter.ttf") format("truetype");
@@ -11,7 +10,6 @@
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
 }
 
 html,
@@ -21,9 +19,9 @@ body {
 
 body {
     font-family: 'Inter', 'Libre Baskerville', Arial, sans-serif;
-    background-color: #fff;
+    background: #fff;
     color: #000;
-    padding: 10px;
+    padding: 12px;
     -webkit-user-select: none;
     user-select: none;
     line-height: 1.35;
@@ -48,92 +46,13 @@ h1 {
 
 .subtitle {
     font-weight: bold;
-    margin-top: 6px;
-    margin-bottom: 8px;
-    font-size: 1em;
+    margin: 6px 0 8px 0;
 }
 
 .version {
     font-size: 0.9em;
     margin-top: 6px;
     color: #222;
-}
-
-.screen {
-    display: block;
-}
-
-.screen.hidden {
-    display: none;
-}
-
-.menu-content,
-.setup-content,
-.game-content {
-    text-align: center;
-    padding: 12px;
-    max-width: 760px;
-    margin: 0 auto;
-}
-
-h2 {
-    font-size: 1.2em;
-    margin-bottom: 8px;
-}
-
-h3 {
-    font-size: 1em;
-    margin: 8px 0;
-}
-
-button,
-.control-btn,
-.menu-btn,
-.setting-btn {
-    display: block;
-    width: 90%;
-    max-width: 380px;
-    margin: 12px auto;
-    padding: 16px 0;
-    background: #000;
-    color: #fff;
-    border: 3px solid #333;
-    font-size: 22px;
-    font-weight: bold;
-    text-align: center;
-}
-
-button:active,
-.control-btn:active {
-    background: #222;
-    color: #fff;
-}
-
-#multiplayer-input-container {
-    width: 100%;
-    max-width: 360px;
-    margin: 0 auto;
-    text-align: left;
-}
-
-#multiplayer-input-container label {
-    font-weight: bold;
-    display: block;
-    margin: 6px 0 3px 0;
-    font-size: 18px;
-}
-
-input[type="text"] {
-    width: 100%;
-    padding: 8px;
-    border: 2px solid #000;
-    margin-bottom: 10px;
-    font-size: 18px;
-    box-sizing: border-box;
-}
-
-.setup-controls {
-    margin-top: 12px;
 }
 
 .achievements-list {
@@ -187,10 +106,57 @@ input[type="text"] {
     font-weight: bold;
 }
 
-#current-ship {
-    font-size: 16px;
-    margin: 6px 0;
+.screen {
+    display: block;
 }
+
+.screen.hidden {
+    display: none;
+}
+
+.menu-content,
+.setup-content,
+.game-content {
+    text-align: center;
+    padding: 12px;
+    margin: 0 auto;
+}
+
+button,
+.control-btn,
+.menu-btn,
+.setting-btn {
+    display: block;
+    width: 90%;
+    max-width: 380px;
+    margin: 12px auto;
+    padding: 18px 0;
+    background: #000;
+    color: #fff;
+    border: 3px solid #333;
+    font-size: 24px;
+    font-weight: bold;
+    border-radius: 10px;
+}
+
+button:active {
+    background: #222;
+}
+
+.stats {
+    margin: 10px auto;
+    padding: 10px;
+    border: 2px solid #000;
+    background: #fafafa;
+    text-align: center;
+}
+
+.stat-box {
+    display: inline-block;
+    margin: 6px 10px;
+    font-size: 16px;
+}
+
 
 .grids {
     width: 100%;
@@ -236,10 +202,7 @@ input[type="text"] {
     background: #d9d9d9;
 }
 
-.grid-cell.hit {
-    background: #000 !important;
-}
-
+.grid-cell.hit,
 .grid-cell.sunk {
     background: #000 !important;
 }
@@ -253,7 +216,6 @@ input[type="text"] {
     margin-left: -5px;
     margin-top: -5px;
     background: #fff;
-    pointer-events: none;
 }
 
 .grid-cell .dot {
@@ -266,32 +228,17 @@ input[type="text"] {
     margin-top: -3px;
     background: #000;
     border-radius: 50%;
-    pointer-events: none;
 }
 
-.stat-box {
-    display: inline-block;
-    margin: 6px 10px;
-    vertical-align: top;
-    font-size: 16px;
-}
-
-.stats {
-    margin: 8px auto;
-    padding: 10px;
-    border: 2px solid #000;
-    background: #fafafa;
-    text-align: center;
-    max-width: 720px;
+#player-grid-container {
+    margin-bottom: 18px;
 }
 
 .setting-row {
-    width: 100%;
     max-width: 380px;
     margin: 0 auto;
     overflow: hidden;
     padding: 0 6px;
-    box-sizing: border-box;
 }
 
 .setting-label {

@@ -62,14 +62,13 @@
     <div id="game-container">
         <div id="header">
             <h1>KShips</h1>
-            <p class="subtitle">Made by LOT, Please star the GitHub repo!</p>
+            <p class="subtitle">Made by LOT</p>
             <div id="status">Select Difficulty to Start</div>
             <div class="version">Version 1.5.0</div>
         </div>
 
         <div id="menu-screen" class="screen">
             <div class="menu-content">
-                <h2>KShips</h2>
                 <button type="button" class="menu-btn" id="single-player-btn">Single Player</button>
                 <button type="button" class="menu-btn" id="multiplayer-btn">Multiplayer</button>
                 <button type="button" class="menu-btn" id="achievements-btn">Achievements</button>
@@ -202,25 +201,24 @@
                     <div class="stat-box">Hit Rate: <span id="hit-rate">0%</span></div>
                 </div>
 
-                <div class="grids">
-                    <div class="grid-container">
-                        <h3>Your Fleet</h3>
-                        <div id="player-game-grid" class="grid"></div>
-                    </div>
-                    <div class="grid-container">
-                        <h3>Enemy Waters</h3>
-                        <div id="enemy-grid" class="grid"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="grids">
+    <div class="grid-container">
+        <h3>Your Fleet</h3>
+        <div id="player-game-grid" class="grid"></div>
+    </div>
+
+    <div class="grid-container">
+        <h3>Enemy Waters</h3>
+        <div id="enemy-grid" class="grid"></div>
+    </div>
+</div>
 
         <div id="game-over-screen" class="screen hidden">
             <div class="menu-content">
                 <h2 id="result-title">Game Over</h2>
                 <div id="final-stats">
                     <p>Shots Fired: <span id="final-shots">0</span></p>
-                    <p>Hit Rate: <span id="final-rate">0%</span></p>
+                    <p>Hit Rate: <span id="final-rate">0</span></p>
                     <p>Ships Sunk: <span id="final-sunk">0</span></p>
                 </div>
                 <div id="achievements-unlocked-display"></div>
