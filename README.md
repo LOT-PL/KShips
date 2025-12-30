@@ -28,7 +28,8 @@ There is 3 styles of difficulty Easy, Medium and Hard
 - Full Battleship gameplay with 5 ships (Carrier, Battleship, Cruiser, Submarine, Destroyer)
 - AI that intelligently attacks back and hunts down your ships
 - Ship placement with manual positioning, rotation, and random placement options
-<img width="500" height="1448" alt="screenshot_2025_11_27T19_30_20+0000_-_Copy 1" src="https://github.com/user-attachments/assets/853332e2-bd79-4913-afc2-1abfe1264d59" />
+<img width="530" height="720" alt="image" src="https://github.com/user-attachments/assets/b8e6be28-9959-4847-8679-e566ead4a6d0" />
+
 
 ## Special Thanks 
 
