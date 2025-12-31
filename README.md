@@ -1,4 +1,4 @@
-<img width="1006" height="325" alt="ascii-art-text-transparent" src="https://github.com/user-attachments/assets/ad584306-f8a8-4d29-97b7-add7ac14553e" />
+<img width="412" height="170" alt="ascii-art-text-transparent" src="https://github.com/user-attachments/assets/71fb68ee-89aa-4bcf-b757-0cf704748c67" />
 
 # KShips is a battleship port to the Kindle!
 
