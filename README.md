@@ -12,6 +12,7 @@ There is 3 styles of difficulty Easy, Medium and Hard
 
  - AdBreak, WinterBreak, or LanguageBreak
  - Latest Universal Hotfix
+ - Minimum Version of  5.12.2.2
 ## Installation
 > [!NOTE]
 > This is my first Kindle Game/App so it is kinda bad!
