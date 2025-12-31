@@ -13,6 +13,8 @@
         { id: 'sharpshooter', name: 'Sharpshooter', desc: 'Achieve 75% hit rate', check: function(s) { return s.hitRate >= 75 && s.shotsFired >= 10; } },
         { id: 'speed_run', name: 'Speed Run', desc: 'Win in under 20 shots', check: function(s) { return s.shotsFired <= 20 && s.victory; } },
         { id: 'perfect_shot', name: 'Perfect Shot', desc: '100% hit rate victory', check: function(s) { return s.hitRate === 100 && s.victory; } },
+        { id: 'easy_victory', name: 'Easy Victory', desc: 'Win on easy difficulty', check: function(s) { return s.difficulty === 'easy' && s.victory; } },
+        { id: 'medium_victory', name: 'Medium Victory', desc: 'Win on medium difficulty', check: function(s) { return s.difficulty === 'medium' && s.victory; } },
         { id: 'dominator', name: 'Dominator', desc: 'Win on hard difficulty', check: function(s) { return s.difficulty === 'hard' && s.victory; } },
         { id: 'explosive', name: 'Explosive Finale', desc: 'Sink 3 ships in a row', check: function(s) { return s.consecutiveSinks >= 3; } }
     ];
@@ -24,7 +26,12 @@
         consecutiveSinks: 0,
         unlockedAchievements: [],
         playerFleets: [null, null],
-        gridSize: 10
+        gridSize: 10,
+        gamesWon: 0,
+        gamesLost: 0,
+        totalShipsSunk: 0,
+        totalShotsFired: 0,
+        totalHits: 0
     };
     var gameState = {
         difficulty: null,
@@ -107,26 +114,28 @@
         var singleBtn = document.getElementById('single-player-btn');
         var multiBtn = document.getElementById('multiplayer-btn');
         var achBtn = document.getElementById('achievements-btn');
+        var statsBtn = document.getElementById('stats-btn');
         var setBtn = document.getElementById('settings-btn');
         var backMenuBtn = document.getElementById('back-to-menu-btn');
         var startMultiBtn = document.getElementById('start-multiplayer-btn');
         var backMultiBtn = document.getElementById('back-from-multiplayer-btn');
         var backAchBtn = document.getElementById('back-from-achievements-btn');
+        var backStatsBtn = document.getElementById('back-from-stats-btn');
         var backSetBtn = document.getElementById('back-from-settings-btn');
-        var mainMenuBtn = document.getElementById('main-menu-btn');
         if (singleBtn) singleBtn.onclick = startSinglePlayer;
         if (multiBtn) multiBtn.onclick = startMultiplayerSetup;
         if (achBtn) achBtn.onclick = showAchievements;
+        if (statsBtn) statsBtn.onclick = showStats;
         if (setBtn) setBtn.onclick = showSettings;
         if (backMenuBtn) backMenuBtn.onclick = goBackToMenu;
         if (startMultiBtn) startMultiBtn.onclick = startMultiplayer;
         if (backMultiBtn) backMultiBtn.onclick = goBackToMenu;
         if (backAchBtn) backAchBtn.onclick = goBackToMenu;
+        if (backStatsBtn) backStatsBtn.onclick = goBackToMenu;
         if (backSetBtn) backSetBtn.onclick = goBackToMenu;
-        if (mainMenuBtn) mainMenuBtn.onclick = goBackToMenu;
     }
     function showScreenNew(screenId) {
-        var screens = ['menu-screen','difficulty-screen','multiplayer-names-screen','achievements-screen','settings-screen','setup-screen','game-screen','game-over-screen'];
+        var screens = ['menu-screen','difficulty-screen','multiplayer-names-screen','achievements-screen','stats-screen','settings-screen','setup-screen','game-screen','game-over-screen'];
         for (var i = 0; i < screens.length; i++) {
             var screen = document.getElementById(screens[i]);
             if (!screen) continue;
@@ -176,6 +185,26 @@
         }
         showScreenNew('achievements-screen');
     }
+    function showStats() {
+        var list = document.getElementById('stats-list');
+        if (!list) { showScreenNew('stats-screen'); return; }
+        list.innerHTML = '';
+        var stats = [
+            { label: 'Games Won', value: appSettings.gamesWon },
+            { label: 'Games Lost', value: appSettings.gamesLost },
+            { label: 'Total Ships Sunk', value: appSettings.totalShipsSunk },
+            { label: 'Total Shots Fired', value: appSettings.totalShotsFired },
+            { label: 'Total Hits', value: appSettings.totalHits },
+            { label: 'Overall Hit Rate', value: appSettings.totalShotsFired > 0 ? Math.round((appSettings.totalHits / appSettings.totalShotsFired) * 100) + '%' : '0%' }
+        ];
+        for (var i = 0; i < stats.length; i++) {
+            var item = document.createElement('div'); item.className = 'achievement-item';
+            var name = document.createElement('div'); name.className = 'achievement-name'; name.textContent = stats[i].label;
+            var value = document.createElement('div'); value.className = 'achievement-desc'; value.textContent = stats[i].value;
+            item.appendChild(name); item.appendChild(value); list.appendChild(item);
+        }
+        showScreenNew('stats-screen');
+    }
     function showSettings() {
         var anim = document.getElementById('animations-check'); if (anim) anim.textContent = appSettings.animationsEnabled ? '✓' : '';
         applyGridSizeFromSettings(); showScreenNew('settings-screen');
@@ -213,11 +242,16 @@
                 appSettings.animationsEnabled = data.animationsEnabled !== false;
                 appSettings.unlockedAchievements = data.unlockedAchievements || [];
                 appSettings.gridSize = data.gridSize || appSettings.gridSize;
+                appSettings.gamesWon = data.gamesWon || 0;
+                appSettings.gamesLost = data.gamesLost || 0;
+                appSettings.totalShipsSunk = data.totalShipsSunk || 0;
+                appSettings.totalShotsFired = data.totalShotsFired || 0;
+                appSettings.totalHits = data.totalHits || 0;
             } catch (e) {}
         }
     }
     function saveSettings() {
-        try { localStorage.setItem('battleship_settings', JSON.stringify({ animationsEnabled: appSettings.animationsEnabled, unlockedAchievements: appSettings.unlockedAchievements, gridSize: appSettings.gridSize })); } catch (e) {}
+        try { localStorage.setItem('battleship_settings', JSON.stringify({ animationsEnabled: appSettings.animationsEnabled, unlockedAchievements: appSettings.unlockedAchievements, gridSize: appSettings.gridSize, gamesWon: appSettings.gamesWon, gamesLost: appSettings.gamesLost, totalShipsSunk: appSettings.totalShipsSunk, totalShotsFired: appSettings.totalShotsFired, totalHits: appSettings.totalHits })); } catch (e) {}
     }
     function startGame(difficulty) {
         gameState.difficulty = difficulty;
@@ -436,34 +470,49 @@
         gameState.shotsFired++; gameState.enemyBoard[row][col].hit = true;
         if (appSettings.animationsEnabled) { t.className += ' animating'; }
         var delay = appSettings.animationsEnabled ? 250 : 0;
+        var statusDelay = 1000;
         setTimeout(function() {
             if (gameState.enemyBoard[row][col].ship !== null) {
                 gameState.hits++; var ship = findShip(gameState.enemyShips,row,col);
                 if (ship) {
                     ship.hits++;
                     if (isShipSunk(ship)) { updateStatus('You sunk the enemy ' + ship.name + '!'); gameState.playerHits++; appSettings.consecutiveSinks++; }
-                    else { updateStatus('Hit!'); }
+                    else { updateStatus('Hit!'); statusDelay = 1000; }
                 }
-            } else { updateStatus('Miss!'); appSettings.consecutiveSinks = 0; }
+            } else { updateStatus('Miss!'); appSettings.consecutiveSinks = 0; statusDelay = 1000; }
             renderGameGrids(); updateStats();
             if (gameState.enemyBoard[row][col].ship !== null) {
                 var statsNow = { victory:false, shotsFired: gameState.shotsFired, hitRate: Math.round((gameState.hits / gameState.shotsFired) * 100), shipsDestroyed: gameState.playerHits, consecutiveSinks: appSettings.consecutiveSinks, difficulty: gameState.difficulty };
-                checkAchievements(statsNow); displayAchievements();
+                checkAchievements(statsNow); 
+                displayAchievements();
             }
-            if (checkGameOver()) return;
-            if (appSettings.gameMode === 'multiplayer') {
-                appSettings.currentPlayer = appSettings.currentPlayer === 0 ? 1 : 0;
-                var tmpB = gameState.playerBoard, tmpS = gameState.playerShips;
-                gameState.playerBoard = gameState.enemyBoard; gameState.playerShips = gameState.enemyShips;
-                gameState.enemyBoard = tmpB; gameState.enemyShips = tmpS;
-                setTimeout(function() { updateStatus(appSettings.playerNames[appSettings.currentPlayer] + "'s turn - Pass device"); renderGameGrids(); }, 700);
-            } else {
-                gameState.isPlayerTurn = false; setTimeout(function() { enemyTurn(); }, 700);
-            }
+            setTimeout(function() {
+                if (checkGameOver()) return;
+                if (appSettings.gameMode === 'multiplayer') {
+                    appSettings.currentPlayer = appSettings.currentPlayer === 0 ? 1 : 0;
+                    var tmpB = gameState.playerBoard, tmpS = gameState.playerShips;
+                    gameState.playerBoard = gameState.enemyBoard; 
+                    gameState.playerShips = gameState.enemyShips;
+                    gameState.enemyBoard = tmpB; 
+                    gameState.enemyShips = tmpS;
+                    setTimeout(function() { 
+                        updateStatus(appSettings.playerNames[appSettings.currentPlayer] + "'s turn - Pass device"); 
+                        renderGameGrids(); 
+                    }, 700);
+                } else {
+                    gameState.isPlayerTurn = false; 
+                    setTimeout(function() { 
+                        enemyTurn(); 
+                    }, 700);
+                }
+            }, statusDelay);
         }, delay);
     }
+    
     function enemyTurn() {
-        if (gameState.gameOver) return; updateStatus('Enemy is attacking...');
+        if (gameState.gameOver) return; 
+        updateStatus('Enemy is attacking...');
+        var statusDelay = 1000;
         setTimeout(function() {
             var target = getAITarget();
             var row = target.row, col = target.col;
@@ -471,11 +520,19 @@
             if (gameState.playerBoard[row][col].ship !== null) {
                 var ship = findShip(gameState.playerShips,row,col);
                 if (ship) {
-                    ship.hits++; gameState.aiLastHit = { row: row, col: col };
+                    ship.hits++; 
+                    gameState.aiLastHit = { row: row, col: col };
                     addAdjacentTargets(row,col);
-                    if (isShipSunk(ship)) { updateStatus('Enemy sunk your ' + ship.name + '!'); gameState.enemyHits++; gameState.aiLastHit = null; gameState.aiTargets = []; gameState.aiHitDirection = null; gameState.aiMode = 'search'; }
-                    else {
-                        updateStatus('Enemy hit your ship!');
+                    if (isShipSunk(ship)) { 
+                        updateStatus('Enemy sunk your ' + ship.name + '!'); 
+                        gameState.enemyHits++; 
+                        gameState.aiLastHit = null; 
+                        gameState.aiTargets = []; 
+                        gameState.aiHitDirection = null; 
+                        gameState.aiMode = 'search'; 
+                    } else {
+                        updateStatus('Enemy hit your ship!'); 
+                        statusDelay = 1000;
                         if (gameState.aiLastHit && gameState.aiTargets.length > 0) {
                             var next = gameState.aiTargets[0];
                             if (next && next.row === gameState.aiLastHit.row) gameState.aiHitDirection = 'horizontal';
@@ -484,19 +541,40 @@
                         }
                     }
                 }
-            } else { updateStatus('Enemy missed!'); }
-            renderGameGrids(); updateStats();
-            if (gameState.playerBoard[row][col].ship !== null) {
-                var statsNow = { victory:false, shotsFired: gameState.shotsFired, hitRate: Math.round((gameState.hits / Math.max(1, gameState.shotsFired)) * 100), shipsDestroyed: gameState.playerHits, consecutiveSinks: appSettings.consecutiveSinks, difficulty: gameState.difficulty };
-                checkAchievements(statsNow); displayAchievements();
+            } else { 
+                updateStatus('Enemy missed!'); 
+                statusDelay = 1000; 
             }
-            if (checkGameOver()) return;
-            gameState.isPlayerTurn = true; setTimeout(function() { updateStatus('Your turn - Select enemy waters to fire!'); }, 600);
+            renderGameGrids(); 
+            updateStats();
+            if (gameState.playerBoard[row][col].ship !== null) {
+                var statsNow = { 
+                    victory:false, 
+                    shotsFired: gameState.shotsFired, 
+                    hitRate: Math.round((gameState.hits / Math.max(1, gameState.shotsFired)) * 100), 
+                    shipsDestroyed: gameState.playerHits, 
+                    consecutiveSinks: appSettings.consecutiveSinks, 
+                    difficulty: gameState.difficulty 
+                };
+                checkAchievements(statsNow); 
+                displayAchievements();
+            }
+            setTimeout(function() {
+                if (checkGameOver()) return;
+                gameState.isPlayerTurn = true; 
+                setTimeout(function() { 
+                    updateStatus('Your turn - Select enemy waters to fire!'); 
+                }, 600);
+            }, statusDelay);
         }, 500);
     }
+    
     function getAITarget() {
         var difficulty = gameState.difficulty;
         if (difficulty === 'easy') {
+            if (gameState.aiTargets.length > 0 && Math.random() < 0.3) {
+                return gameState.aiTargets.shift();
+            }
             return getRandomTarget();
         } else if (difficulty === 'medium') {
             if (gameState.aiTargets.length > 0 && Math.random() < 0.7) {
@@ -508,15 +586,41 @@
                 if (gameState.aiHitDirection) {
                     for (var i = 0; i < gameState.aiTargets.length; i++) {
                         var t = gameState.aiTargets[i];
-                        if (gameState.aiHitDirection === 'horizontal' && t.row === gameState.aiLastHit.row) { gameState.aiTargets.splice(i,1); return t; }
-                        if (gameState.aiHitDirection === 'vertical' && t.col === gameState.aiLastHit.col) { gameState.aiTargets.splice(i,1); return t; }
+                        if (gameState.aiHitDirection === 'horizontal' && t.row === gameState.aiLastHit.row) { 
+                            gameState.aiTargets.splice(i,1); 
+                            return t; 
+                        }
+                        if (gameState.aiHitDirection === 'vertical' && t.col === gameState.aiLastHit.col) { 
+                            gameState.aiTargets.splice(i,1); 
+                            return t; 
+                        }
                     }
                 }
                 return gameState.aiTargets.shift();
             }
+            var bestTargets = [];
+            for (var r = 0; r < GRID_SIZE; r++) {
+                for (var c = 0; c < GRID_SIZE; c++) {
+                    if (!gameState.playerBoard[r][c].hit) {
+                        var adjacentHits = 0;
+                        if (r > 0 && gameState.playerBoard[r-1][c].hit && gameState.playerBoard[r-1][c].ship) adjacentHits++;
+                        if (r < GRID_SIZE-1 && gameState.playerBoard[r+1][c].hit && gameState.playerBoard[r+1][c].ship) adjacentHits++;
+                        if (c > 0 && gameState.playerBoard[r][c-1].hit && gameState.playerBoard[r][c-1].ship) adjacentHits++;
+                        if (c < GRID_SIZE-1 && gameState.playerBoard[r][c+1].hit && gameState.playerBoard[r][c+1].ship) adjacentHits++;
+                        if (adjacentHits > 0) {
+                            bestTargets.push({ row: r, col: c, priority: adjacentHits });
+                        }
+                    }
+                }
+            }
+            if (bestTargets.length > 0) {
+                bestTargets.sort(function(a,b) { return b.priority - a.priority; });
+                return bestTargets[0];
+            }
             return getRandomTarget();
         }
     }
+    
     function getRandomTarget() {
         var attempts = 0;
         while (attempts < 500) {
@@ -532,6 +636,7 @@
         }
         return { row: 0, col: 0 };
     }
+    
     function addAdjacentTargets(row,col) {
         var dirs = [{r:-1,c:0},{r:1,c:0},{r:0,c:-1},{r:0,c:1}];
         for (var i = 0; i < dirs.length; i++) {
@@ -540,13 +645,17 @@
                 if (!gameState.playerBoard[nr][nc].hit) {
                     var exists = false;
                     for (var j = 0; j < gameState.aiTargets.length; j++) {
-                        if (gameState.aiTargets[j].row === nr && gameState.aiTargets[j].col === nc) { exists = true; break; }
+                        if (gameState.aiTargets[j].row === nr && gameState.aiTargets[j].col === nc) { 
+                            exists = true; 
+                            break; 
+                        }
                     }
                     if (!exists) gameState.aiTargets.push({ row: nr, col: nc });
                 }
             }
         }
     }
+    
     function findShip(list,row,col) {
         for (var i = 0; i < list.length; i++) {
             var s = list[i];
@@ -556,50 +665,129 @@
         }
         return null;
     }
-    function isShipSunk(ship) { return ship.hits >= ship.size; }
+    
+    function isShipSunk(ship) { 
+        return ship.hits >= ship.size; 
+    }
+    
     function updateStats() {
-        var ps = document.getElementById('player-ships'); var es = document.getElementById('enemy-ships');
-        if (ps) ps.textContent = (SHIPS.length - gameState.enemyHits); if (es) es.textContent = (SHIPS.length - gameState.playerHits);
-        var sc = document.getElementById('shot-count'); if (sc) sc.textContent = gameState.shotsFired;
-        var hr = document.getElementById('hit-rate'); var hitRate = gameState.shotsFired > 0 ? Math.round((gameState.hits / gameState.shotsFired) * 100) : 0;
+        var ps = document.getElementById('player-ships'); 
+        var es = document.getElementById('enemy-ships');
+        if (ps) ps.textContent = (SHIPS.length - gameState.enemyHits); 
+        if (es) es.textContent = (SHIPS.length - gameState.playerHits);
+        var sc = document.getElementById('shot-count'); 
+        if (sc) sc.textContent = gameState.shotsFired;
+        var hr = document.getElementById('hit-rate'); 
+        var hitRate = gameState.shotsFired > 0 ? Math.round((gameState.hits / gameState.shotsFired) * 100) : 0;
         if (hr) hr.textContent = hitRate + '%';
     }
+    
     function checkGameOver() {
-        if (gameState.playerHits === SHIPS.length) { gameState.gameOver = true; showGameOver(true); return true; }
-        if (gameState.enemyHits === SHIPS.length) { gameState.gameOver = true; showGameOver(false); return true; }
+        if (gameState.playerHits === SHIPS.length) { 
+            gameState.gameOver = true; 
+            showGameOver(true); 
+            return true; 
+        }
+        if (gameState.enemyHits === SHIPS.length) { 
+            gameState.gameOver = true; 
+            showGameOver(false); 
+            return true; 
+        }
         return false;
     }
+    
     function showGameOver(playerWon) {
+        appSettings.totalShotsFired += gameState.shotsFired;
+        appSettings.totalHits += gameState.hits;
+        appSettings.totalShipsSunk += gameState.playerHits;
+        if (playerWon) {
+            appSettings.gamesWon++;
+        } else {
+            appSettings.gamesLost++;
+        }
+        saveSettings();
         setTimeout(function() {
             showScreenNew('game-over-screen');
             var title = playerWon ? 'Victory!' : 'Defeat';
-            if (appSettings.gameMode === 'multiplayer') { title = playerWon ? (appSettings.playerNames[appSettings.currentPlayer] + ' Wins!') : (appSettings.playerNames[appSettings.currentPlayer === 0 ? 1 : 0] + ' Wins!'); }
-            var res = document.getElementById('result-title'); if (res) res.textContent = title;
-            var fs = document.getElementById('final-shots'); if (fs) fs.textContent = gameState.shotsFired;
-            var fr = document.getElementById('final-rate'); var hitRate = gameState.shotsFired > 0 ? Math.round((gameState.hits / gameState.shotsFired) * 100) : 0;
+            if (appSettings.gameMode === 'multiplayer') { 
+                title = playerWon ? (appSettings.playerNames[appSettings.currentPlayer] + ' Wins!') : (appSettings.playerNames[appSettings.currentPlayer === 0 ? 1 : 0] + ' Wins!'); 
+            }
+            var res = document.getElementById('result-title'); 
+            if (res) res.textContent = title;
+            var fs = document.getElementById('final-shots'); 
+            if (fs) fs.textContent = gameState.shotsFired;
+            var fr = document.getElementById('final-rate'); 
+            var hitRate = gameState.shotsFired > 0 ? Math.round((gameState.hits / gameState.shotsFired) * 100) : 0;
             if (fr) fr.textContent = hitRate + '%';
-            var fss = document.getElementById('final-sunk'); if (fss) fss.textContent = gameState.playerHits + ' / ' + SHIPS.length;
-            var stats = { victory: playerWon, shotsFired: gameState.shotsFired, hitRate: hitRate, shipsDestroyed: gameState.playerHits, consecutiveSinks: appSettings.consecutiveSinks, difficulty: gameState.difficulty };
-            checkAchievements(stats); displayAchievements();
+            var fss = document.getElementById('final-sunk'); 
+            if (fss) fss.textContent = gameState.playerHits + ' / ' + SHIPS.length;
+            var stats = { 
+                victory: playerWon, 
+                shotsFired: gameState.shotsFired, 
+                hitRate: hitRate, 
+                shipsDestroyed: gameState.playerHits, 
+                consecutiveSinks: appSettings.consecutiveSinks, 
+                difficulty: gameState.difficulty 
+            };
+            checkAchievements(stats); 
+            displayAchievements();
         }, 600);
     }
+    
     function resetGame() {
         GRID_SIZE = parseInt(appSettings.gridSize,10) || 10;
-        gameState = { difficulty:null, currentShipIndex:0, isHorizontal:true, playerBoard:null, enemyBoard:null, playerShips:[], enemyShips:[], playerHits:0, enemyHits:0, shotsFired:0, hits:0, isPlayerTurn:true, gameOver:false, aiLastHit:null, aiTargets:[], aiHitDirection:null, aiMode:'search' };
-        appSettings.consecutiveSinks = 0; appSettings.playerFleets = [null,null];
-        initializeBoards(); showScreenNew('menu-screen'); updateStatus('Battleship');
-        var sb = document.getElementById('start-game-btn'); if (sb) sb.disabled = true;
+        gameState = { 
+            difficulty:null, 
+            currentShipIndex:0, 
+            isHorizontal:true, 
+            playerBoard:null, 
+            enemyBoard:null, 
+            playerShips:[], 
+            enemyShips:[], 
+            playerHits:0, 
+            enemyHits:0, 
+            shotsFired:0, 
+            hits:0, 
+            isPlayerTurn:true, 
+            gameOver:false, 
+            aiLastHit:null, 
+            aiTargets:[], 
+            aiHitDirection:null, 
+            aiMode:'search' 
+        };
+        appSettings.consecutiveSinks = 0; 
+        appSettings.playerFleets = [null,null];
+        initializeBoards(); 
+        showScreenNew('menu-screen'); 
+        updateStatus('Battleship');
+        var sb = document.getElementById('start-game-btn'); 
+        if (sb) sb.disabled = true;
     }
+    
     function copyBoard(board) {
         var b = createEmptyBoard();
-        for (var r = 0; r < GRID_SIZE; r++) { for (var c = 0; c < GRID_SIZE; c++) { b[r][c].ship = board[r][c].ship; b[r][c].hit = !!board[r][c].hit; } }
+        for (var r = 0; r < GRID_SIZE; r++) { 
+            for (var c = 0; c < GRID_SIZE; c++) { 
+                b[r][c].ship = board[r][c].ship; 
+                b[r][c].hit = !!board[r][c].hit; 
+            } 
+        }
         return b;
     }
+    
     function copyShips(ships) {
         var out = [];
-        for (var i = 0; i < ships.length; i++) out.push({ name: ships[i].name, size: ships[i].size, positions: JSON.parse(JSON.stringify(ships[i].positions)), hits: ships[i].hits || 0 });
+        for (var i = 0; i < ships.length; i++) {
+            out.push({ 
+                name: ships[i].name, 
+                size: ships[i].size, 
+                positions: JSON.parse(JSON.stringify(ships[i].positions)), 
+                hits: ships[i].hits || 0 
+            });
+        }
         return out;
     }
+    
     function checkAchievements(stats) {
         for (var i = 0; i < ACHIEVEMENTS.length; i++) {
             var ach = ACHIEVEMENTS[i];
@@ -609,6 +797,7 @@
         }
         saveSettings();
     }
+    
     function displayAchievements() {
         var div = document.getElementById('achievements-unlocked-display');
         if (!div) return;
@@ -620,5 +809,10 @@
         }
         div.textContent = newUnlocked.length ? 'Achievements: ' + newUnlocked.join(', ') : 'No achievements yet';
     }
-    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); }
+    
+    if (document.readyState === 'loading') { 
+        document.addEventListener('DOMContentLoaded', init); 
+    } else { 
+        init(); 
+    }
 })();

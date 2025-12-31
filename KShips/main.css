@@ -130,11 +130,11 @@ button,
     width: 90%;
     max-width: 380px;
     margin: 12px auto;
-    padding: 18px 0;
+    padding: 22px 0;
     background: #000;
     color: #fff;
     border: 3px solid #333;
-    font-size: 24px;
+    font-size: 26px;
     font-weight: bold;
     border-radius: 10px;
 }
@@ -275,7 +275,7 @@ button:active {
     button,
     .control-btn,
     .menu-btn {
-        font-size: 20px;
-        padding: 14px 0;
+        font-size: 22px;
+        padding: 18px 0;
     }
 }

@@ -64,7 +64,7 @@
             <h1>KShips</h1>
             <p class="subtitle">Made by LOT</p>
             <div id="status">Select Difficulty to Start</div>
-            <div class="version">Version 1.5.0</div>
+            <div class="version">Version 1.5.5</div>
         </div>
 
         <div id="menu-screen" class="screen">
@@ -72,6 +72,7 @@
                 <button type="button" class="menu-btn" id="single-player-btn">Single Player</button>
                 <button type="button" class="menu-btn" id="multiplayer-btn">Multiplayer</button>
                 <button type="button" class="menu-btn" id="achievements-btn">Achievements</button>
+                <button type="button" class="menu-btn" id="stats-btn">Stats</button>
                 <button type="button" class="menu-btn" id="settings-btn">Settings</button>
             </div>
         </div>
@@ -110,6 +111,18 @@
                 </div>
                 <div class="setup-controls">
                     <button type="button" class="control-btn" id="back-from-achievements-btn">Back</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="stats-screen" class="screen hidden">
+            <div class="setup-content">
+                <h2>Statistics</h2>
+                <div id="stats-list-wrap">
+                    <div id="stats-list" class="achievements-list"></div>
+                </div>
+                <div class="setup-controls">
+                    <button type="button" class="control-btn" id="back-from-stats-btn">Back</button>
                 </div>
             </div>
         </div>
@@ -191,7 +204,7 @@
             </div>
         </div>
 
-        <div id="game-screen" class="screen hidden">
+<div id="game-screen" class="screen hidden">
             <div class="game-content">
                 <div class="stats">
                     <div class="stat-box"><strong>Ships Remaining</strong></div>
@@ -201,17 +214,19 @@
                     <div class="stat-box">Hit Rate: <span id="hit-rate">0%</span></div>
                 </div>
 
-<div class="grids">
-    <div class="grid-container">
-        <h3>Your Fleet</h3>
-        <div id="player-game-grid" class="grid"></div>
-    </div>
+                <div class="grids">
+                    <div class="grid-container">
+                        <h3>Your Fleet</h3>
+                        <div id="player-game-grid" class="grid"></div>
+                    </div>
 
-    <div class="grid-container">
-        <h3>Enemy Waters</h3>
-        <div id="enemy-grid" class="grid"></div>
-    </div>
-</div>
+                    <div class="grid-container">
+                        <h3>Enemy Waters</h3>
+                        <div id="enemy-grid" class="grid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div id="game-over-screen" class="screen hidden">
             <div class="menu-content">
@@ -223,11 +238,8 @@
                 </div>
                 <div id="achievements-unlocked-display"></div>
                 <button type="button" class="menu-btn" id="play-again-btn">Play Again</button>
-                <button type="button" class="menu-btn" id="main-menu-btn">Main Menu</button>
             </div>
         </div>
-    </div>
-
     <script type="text/javascript" src="main.js"></script>
 </body>
 </html>
