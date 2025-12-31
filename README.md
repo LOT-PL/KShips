@@ -30,6 +30,7 @@ There is 3 styles of difficulty Easy, Medium and Hard
 - Achivements (Very Brutal)
 - Settings with customisable Grid Sizes
 - Ship placement with manual positioning, rotation, and random placement options
+- Statistics that show your skills
 <img width="530" height="720" alt="image" src="https://github.com/user-attachments/assets/b8e6be28-9959-4847-8679-e566ead4a6d0" />
 
 
