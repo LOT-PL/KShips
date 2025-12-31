@@ -1,6 +1,6 @@
-<img width="412" height="170" alt="ascii-art-text-transparent" src="https://github.com/user-attachments/assets/71fb68ee-89aa-4bcf-b757-0cf704748c67" />
+<img width="460" height="245" alt="ascii-art-text-transparent" src="https://github.com/user-attachments/assets/84c28614-1396-401c-a2a4-e7709ddecf9d" />
 
-# KShips is a battleship port to the Kindle!
+# A battleship port to the Kindle!
 
 There is 3 styles of difficulty Easy, Medium and Hard
  
@@ -31,4 +31,4 @@ There is 3 styles of difficulty Easy, Medium and Hard
 
 ## Special Thanks 
 
-- [Penguins184](https://ko-fi.com/penguins186), Helping me like 100 times 
+- [Penguins184](https://ko-fi.com/penguins186), Helping me like 100 times (Support him on ko-fi!)
