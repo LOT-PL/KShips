@@ -15,7 +15,7 @@ There is 3 styles of difficulty Easy, Medium and Hard
  - Minimum Version of  5.12.2.2
 ## Installation
 
-You can use **kindleforge** to install KShips so its recommended 
+You can use [KindleForge](https://github.com/KindleTweaks/KindleForge) to install KShips so its recommended 
 
 **Manual Installation:**
 
