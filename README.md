@@ -14,8 +14,10 @@ There is 3 styles of difficulty Easy, Medium and Hard
  - Latest Universal Hotfix
  - Minimum Version of  5.12.2.2
 ## Installation
-> [!NOTE]
-> This is my first Kindle Game/App so it is kinda bad!
+
+You can use **kindleforge** to install KShips so its recommended 
+
+**Manual Installation:**
 
 1. Grab the latest file from releases
 2. Unzip it, paste both `KShips/` and `KShips.sh` into the `documents/` folder on your Kindle.
