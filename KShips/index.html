@@ -64,7 +64,7 @@
             <h1>KShips</h1>
             <p class="subtitle">Made by LOT</p>
             <div id="status">Select Difficulty to Start</div>
-            <div class="version">Version 1.5.5</div>
+            <div class="version">Version 1.5.6</div>
         </div>
 
         <div id="menu-screen" class="screen">
@@ -83,6 +83,7 @@
                 <button type="button" class="menu-btn" id="easy-btn">Easy</button>
                 <button type="button" class="menu-btn" id="medium-btn">Medium</button>
                 <button type="button" class="menu-btn" id="hard-btn">Hard</button>
+                <button type="button" class="menu-btn hidden" id="insane-btn">Insane</button>
                 <button type="button" class="menu-btn" id="back-to-menu-btn">Back</button>
             </div>
         </div>
@@ -181,6 +182,7 @@
                 </button>
 
                 <div class="setup-controls">
+                    <button type="button" class="control-btn" id="reset-data-btn">Reset All Data</button>
                     <button type="button" class="control-btn" id="back-from-settings-btn">Back</button>
                 </div>
             </div>
@@ -198,13 +200,14 @@
                 </div>
                 <div class="setup-controls">
                     <button type="button" id="rotate-btn" class="control-btn">Rotate Ship</button>
+                    <button type="button" id="undo-btn" class="control-btn" disabled="disabled">Undo Last Ship</button>
                     <button type="button" id="random-btn" class="control-btn">Random Placement</button>
                     <button type="button" id="start-game-btn" class="control-btn" disabled="disabled">Start Battle</button>
                 </div>
             </div>
         </div>
 
-<div id="game-screen" class="screen hidden">
+        <div id="game-screen" class="screen hidden">
             <div class="game-content">
                 <div class="stats">
                     <div class="stat-box"><strong>Ships Remaining</strong></div>
@@ -240,6 +243,8 @@
                 <button type="button" class="menu-btn" id="play-again-btn">Play Again</button>
             </div>
         </div>
+    </div>
+
     <script type="text/javascript" src="main.js"></script>
 </body>
 </html>
