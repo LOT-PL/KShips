@@ -2,6 +2,9 @@
 
 # A battleship port to the Kindle!
 
+>[!NOTE]
+>So basically I haven't updated this in a while due to myself having other stuff to do so this is one of my least priorites i will try to get a new version out as soon as possible
+
 There is 3 styles of difficulty Easy, Medium and Hard
  
 - Easy: Random shooting only
